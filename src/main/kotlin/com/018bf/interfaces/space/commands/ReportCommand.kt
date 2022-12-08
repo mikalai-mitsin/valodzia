@@ -26,10 +26,36 @@ class ReportCommand(private val reportUseCase: IReportUseCase, override val spac
             })
             return
         }
-        val reports =
-            reportUseCase.listDailyReportByUserAndDates(args.from, args.to, payload.userId)
-        reports.forEach {
-            sendMessage(payload.userId, reportMessage(it))
+        sendMessage(userID = payload.userId, start())
+        try {
+            val reports =
+                reportUseCase.listDailyReportByUserAndDates(args.from, args.to, payload.userId)
+            reports.forEach {
+                sendMessage(payload.userId, reportMessage(it))
+            }
+        } catch (e: Exception) {
+            sendMessage(payload.userId, errorMessage(e))
+        }
+    }
+
+    private fun errorMessage(e: Exception): ChatMessage {
+        return message {
+            section {
+                text(
+                    "Chieravascieńka mnie niešta \uD83D\uDE15  \n $e",
+                    MessageStyle.ERROR
+                )
+            }
+        }
+    }
+    private fun start(): ChatMessage {
+        return message {
+            section {
+                text(
+                    "Let me see \uD83D\uDC40",
+                    MessageStyle.PRIMARY
+                )
+            }
         }
     }
 
@@ -64,7 +90,7 @@ class ReportCommand(private val reportUseCase: IReportUseCase, override val spac
 
     private fun getArgs(payload: MessagePayload): ReportArgs? {
         val today = Calendar.getInstance().time.toInstant().toKotlinInstant().toLocalDateTime(TimeZone.UTC).date
-        val args = payload.commandArguments() ?: return null
+        val args = payload.commandArguments()?.replace("\n", "") ?: return null
         return try {
             val start =
                 args.substringBefore(" ").takeIf { it.isNotEmpty() }?.let { LocalDate.parse(it) } ?: today
@@ -72,7 +98,7 @@ class ReportCommand(private val reportUseCase: IReportUseCase, override val spac
                 ?: today
             ReportArgs(from = start, to = end)
         } catch (e: Exception) {
-            null
+            return null
         }
     }
 }
