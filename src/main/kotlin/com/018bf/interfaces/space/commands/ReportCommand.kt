@@ -2,10 +2,8 @@ package com.`018bf`.interfaces.space.commands
 
 import com.`018bf`.domain.models.DailyReport
 import com.`018bf`.domain.usecases.IReportUseCase
-import kotlinx.datetime.LocalDate
+import kotlinx.datetime.*
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toKotlinInstant
-import kotlinx.datetime.toLocalDateTime
 import space.jetbrains.api.runtime.SpaceClient
 import space.jetbrains.api.runtime.helpers.commandArguments
 import space.jetbrains.api.runtime.types.MessagePayload
@@ -36,10 +34,17 @@ class ReportCommand(private val reportUseCase: IReportUseCase, override val spac
     }
 
     private fun reportMessage(report: DailyReport): ChatMessage {
-        val style = when (report.getTotal().inWholeHours) {
-            in 8..9 -> MessageStyle.SUCCESS
-            in 6..7 -> MessageStyle.WARNING
-            else -> MessageStyle.ERROR
+        val style = if (report.date.dayOfWeek in listOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)) {
+            when (report.getTotal().inWholeMinutes) {
+                in 0..0 -> MessageStyle.SUCCESS
+                else -> MessageStyle.ERROR
+            }
+        } else {
+            when (report.getTotal().inWholeHours) {
+                in 8..9 -> MessageStyle.SUCCESS
+                in 6..7 -> MessageStyle.WARNING
+                else -> MessageStyle.ERROR
+            }
         }
         return message {
             section {
