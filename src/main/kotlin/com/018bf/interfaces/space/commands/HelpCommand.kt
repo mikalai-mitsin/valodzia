@@ -1,4 +1,4 @@
-package com.mitsin.interfaces.space.commands
+package com.`018bf`.interfaces.space.commands
 
 import space.jetbrains.api.runtime.SpaceClient
 import space.jetbrains.api.runtime.helpers.message

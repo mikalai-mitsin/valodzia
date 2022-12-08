@@ -1,4 +1,4 @@
-package com.mitsin.interfaces.space.commands
+package com.`018bf`.interfaces.space.commands
 
 import kotlinx.datetime.LocalDate
 

@@ -1,6 +1,6 @@
-package com.mitsin.domain.repositories
+package com.`018bf`.domain.repositories
 
-import com.mitsin.domain.models.Issue
+import com.`018bf`.domain.models.Issue
 
 interface IIssueRepository {
     suspend fun getIssueByProjectAndUser(userID: String): List<Issue>

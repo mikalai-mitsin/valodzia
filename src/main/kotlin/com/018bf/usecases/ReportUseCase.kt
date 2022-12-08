@@ -1,10 +1,10 @@
-package com.mitsin.usecases
+package com.`018bf`.usecases
 
 import kotlinx.datetime.*
-import com.mitsin.domain.models.DailyReport
-import com.mitsin.domain.models.IssueReport
-import com.mitsin.domain.repositories.IIssueRepository
-import com.mitsin.domain.usecases.IReportUseCase
+import com.`018bf`.domain.models.DailyReport
+import com.`018bf`.domain.models.IssueReport
+import com.`018bf`.domain.repositories.IIssueRepository
+import com.`018bf`.domain.usecases.IReportUseCase
 
 
 class ReportUseCase(private val issueRepository: IIssueRepository) : IReportUseCase {

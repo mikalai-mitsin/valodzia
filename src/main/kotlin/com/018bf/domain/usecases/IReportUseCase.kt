@@ -1,6 +1,6 @@
-package com.mitsin.domain.usecases
+package com.`018bf`.domain.usecases
 
-import com.mitsin.domain.models.DailyReport
+import com.`018bf`.domain.models.DailyReport
 import kotlinx.datetime.LocalDate
 
 interface IReportUseCase {

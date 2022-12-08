@@ -1,4 +1,4 @@
-package com.mitsin.domain.models
+package com.`018bf`.domain.models
 
 import kotlin.time.Duration
 

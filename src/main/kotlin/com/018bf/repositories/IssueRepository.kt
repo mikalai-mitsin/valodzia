@@ -1,8 +1,8 @@
-package com.mitsin.repositories
+package com.`018bf`.repositories
 
-import com.mitsin.domain.models.Issue
-import com.mitsin.domain.models.Spend
-import com.mitsin.domain.repositories.IIssueRepository
+import com.`018bf`.domain.models.Issue
+import com.`018bf`.domain.models.Spend
+import com.`018bf`.domain.repositories.IIssueRepository
 import kotlinx.coroutines.*
 import space.jetbrains.api.runtime.BatchInfo
 import space.jetbrains.api.runtime.SpaceClient
