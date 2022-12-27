@@ -42,7 +42,7 @@ fun Application.configureRouting() {
             messageHandler.handle(call)
         }
         get("/") {
-            reportUserCase.getDailyReportByUser("a25ro0qsUBl", LocalDate.parse("2022-12-09"))
+            call.respondText("Žyvie")
         }
     }
 }
