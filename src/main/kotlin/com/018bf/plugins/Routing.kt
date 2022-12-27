@@ -2,6 +2,7 @@ package com.`018bf`.plugins
 
 import com.`018bf`.interfaces.space.MessageHandler
 import com.`018bf`.repositories.IssueRepository
+import com.`018bf`.repositories.WorkingDayRepository
 import com.`018bf`.usecases.ReportUseCase
 import io.ktor.http.*
 import io.ktor.client.plugins.cache.*
@@ -9,6 +10,7 @@ import io.ktor.client.plugins.cache.*
 import io.ktor.server.routing.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
+import kotlinx.datetime.LocalDate
 import space.jetbrains.api.runtime.SpaceAppInstance
 import space.jetbrains.api.runtime.SpaceAuth
 import space.jetbrains.api.runtime.SpaceClient
@@ -30,7 +32,8 @@ fun Application.configureRouting() {
     val space =
         SpaceClient(ktorClient = spaceHttpClient, appInstance = spaceAppInstance, auth = SpaceAuth.ClientCredentials())
     val issueRepository = IssueRepository(space)
-    val reportUserCase = ReportUseCase(issueRepository)
+    val workingDayRepository = WorkingDayRepository(space)
+    val reportUserCase = ReportUseCase(issueRepository, workingDayRepository)
     val messageHandler = MessageHandler(reportUserCase, space)
 
 
@@ -39,7 +42,7 @@ fun Application.configureRouting() {
             messageHandler.handle(call)
         }
         get("/") {
-            call.respond(HttpStatusCode.OK, "")
+            reportUserCase.getDailyReportByUser("a25ro0qsUBl", LocalDate.parse("2022-12-09"))
         }
     }
 }

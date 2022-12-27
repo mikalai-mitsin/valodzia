@@ -1,16 +1,23 @@
 package com.`018bf`.domain.models
 
 import kotlinx.datetime.LocalDate
+import space.jetbrains.api.runtime.types.MessageStyle
 import kotlin.time.Duration
 import kotlin.time.DurationUnit
 import kotlin.time.toDuration
 
-open class DailyReport(var date: LocalDate, var spend: List<IssueReport>) {
-    class FromIssues(date: LocalDate, issues: List<Issue>) : DailyReport(
+open class DailyReport(var date: LocalDate, var spend: List<IssueReport>, val workingDay: WorkingDay) {
+    class FromIssues(date: LocalDate, issues: List<Issue>, workingDay: WorkingDay) : DailyReport(
         date,
         issues.filter { it.getDaySum(date).isPositive() }
-            .map { IssueReport("${it.project}: ${it.title}", it.getDaySum(date)) }
+            .map { IssueReport("${it.project}: ${it.title}", it.getDaySum(date)) },
+        workingDay,
     )
+    enum class Level {
+        OK,
+        WARNING,
+        BAD
+    }
 
     fun getTotal(): Duration {
         return spend.sumOf { it.spend.toInt(DurationUnit.MINUTES) }.toDuration(DurationUnit.MINUTES)
@@ -25,5 +32,12 @@ open class DailyReport(var date: LocalDate, var spend: List<IssueReport>) {
         ) { "| ${it.title} | ${it.spend} |" }
         body += "| Total | **${this.getTotal()}** |\n"
         return body
+    }
+    fun getLevel(): Level {
+        return when (getTotal().inWholeMinutes) {
+            in workingDay.duration.inWholeMinutes - 15..workingDay.duration.inWholeMinutes + 15 -> Level.OK
+            in workingDay.duration.inWholeMinutes - 60..workingDay.duration.inWholeMinutes + 60 -> Level.WARNING
+            else -> Level.BAD
+        }
     }
 }

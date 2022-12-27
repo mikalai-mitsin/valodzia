@@ -48,6 +48,7 @@ class ReportCommand(private val reportUseCase: IReportUseCase, override val spac
             }
         }
     }
+
     private fun start(): ChatMessage {
         return message {
             section {
@@ -60,17 +61,13 @@ class ReportCommand(private val reportUseCase: IReportUseCase, override val spac
     }
 
     private fun reportMessage(report: DailyReport): ChatMessage {
-        val style = if (report.date.dayOfWeek in listOf(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY)) {
-            when (report.getTotal().inWholeMinutes) {
-                in 0..0 -> MessageStyle.SUCCESS
-                else -> MessageStyle.ERROR
-            }
-        } else {
-            when (report.getTotal().inWholeHours) {
-                in 8..9 -> MessageStyle.SUCCESS
-                in 6..7 -> MessageStyle.WARNING
-                else -> MessageStyle.ERROR
-            }
+        val style = when (report.getLevel()) {
+            DailyReport.Level.OK ->
+                MessageStyle.SUCCESS
+            DailyReport.Level.WARNING ->
+                MessageStyle.WARNING
+            else ->
+                MessageStyle.ERROR
         }
         return message {
             section {
