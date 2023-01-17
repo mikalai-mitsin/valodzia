@@ -77,7 +77,7 @@ class ReportCommand(private val reportUseCase: IReportUseCase, override val spac
                 )
                 fields {
                     report.spend.forEach {
-                        field(it.title, it.spend.toString())
+                        field(it.title.take(60), it.spend.toString())
                     }
                     field("Total", report.getTotal().toString())
                 }
