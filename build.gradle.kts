@@ -5,6 +5,9 @@ val space_version: String by project
 val koin_version: String by project
 val koin_ktor: String by project
 val kotor_client_apache: String by project
+val exposed_version: String by project
+val h2_version: String by project
+
 
 plugins {
     application
@@ -12,7 +15,7 @@ plugins {
     id("io.ktor.plugin") version "2.1.3"
 }
 
-group = "com.018bf"
+group = "com.u018bf"
 version = "0.1.6"
 
 application {
@@ -32,12 +35,18 @@ dependencies {
     implementation("io.insert-koin:koin-core:$koin_version")
     implementation("io.insert-koin:koin-ktor:$koin_ktor")
     implementation("io.insert-koin:koin-logger-slf4j:$koin_ktor")
-    implementation("io.ktor:ktor-server-core-jvm:2.2.1")
-    implementation("io.ktor:ktor-server-netty-jvm:2.2.1")
-    implementation("io.ktor:ktor-client-apache-jvm:2.2.1")
+    implementation("io.ktor:ktor-server-core-jvm:2.2.2")
+    implementation("io.ktor:ktor-server-netty-jvm:2.2.2")
+    implementation("io.ktor:ktor-client-apache-jvm:2.2.2")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
-    testImplementation("io.ktor:ktor-server-tests-jvm:2.2.1")
+    implementation("org.ktorm:ktorm-core:3.5.0")
+    implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
+    implementation("org.postgresql:postgresql:42.3.1")
+    implementation("org.jetbrains.exposed:exposed-java-time:$exposed_version")
+    testImplementation("io.ktor:ktor-server-tests-jvm:2.2.2")
 }
 
 tasks.withType<Jar> {
