@@ -39,7 +39,8 @@ class IssueRepository(private val space: SpaceClient) : IIssueRepository {
                     delay(5L)
                     launch {
                         val tracks = space.timeTracking.items.getAllItems(
-                            subject = TimeTrackingSubjectIdentifier.Issue(IssueIdentifier.Id(issue.id))
+                            subject = TimeTrackingSubjectIdentifier.Issue(IssueIdentifier.Id(issue.id)),
+                            batchInfo = BatchInfo(batchSize = 1000, offset = null),
                         ) {
                             id()
                             duration()
