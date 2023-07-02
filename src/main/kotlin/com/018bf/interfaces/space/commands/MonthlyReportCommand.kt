@@ -1,7 +1,7 @@
 package com.`018bf`.interfaces.space.commands
 
-import com.`018bf`.domain.models.DailyReport
 import com.`018bf`.domain.usecases.IReportUseCase
+import com.`018bf`.domain.models.MonthlyReport
 import kotlinx.datetime.*
 import kotlinx.datetime.TimeZone
 import space.jetbrains.api.runtime.SpaceClient
@@ -13,9 +13,9 @@ import space.jetbrains.api.runtime.types.MessageStyle
 import java.time.format.TextStyle
 import java.util.*
 
-class ReportCommand(private val reportUseCase: IReportUseCase, override val spaceClient: SpaceClient) : ICommand {
-    override val name = "report"
-    override val info = "Show time tracking report"
+class MonthlyReportCommand(private val reportUseCase: IReportUseCase, override val spaceClient: SpaceClient) : ICommand {
+    override val name = "monthly"
+    override val info = "Show monthly time tracking report"
 
     override suspend fun run(payload: MessagePayload) {
         val args = getArgs(payload) ?: run {
@@ -28,11 +28,8 @@ class ReportCommand(private val reportUseCase: IReportUseCase, override val spac
         }
         sendMessage(userID = payload.userId, start())
         try {
-            val reports =
-                reportUseCase.listDailyReportByUserAndDates(args.from, args.to, payload.userId)
-            reports.forEach {
-                sendMessage(payload.userId, reportMessage(it))
-            }
+            val report = reportUseCase.getMonthlyReportByUser(payload.userId, args.date)
+            sendMessage(payload.userId, reportMessage(report))
         } catch (e: Exception) {
             sendMessage(payload.userId, errorMessage(e))
         }
@@ -60,19 +57,12 @@ class ReportCommand(private val reportUseCase: IReportUseCase, override val spac
         }
     }
 
-    private fun reportMessage(report: DailyReport): ChatMessage {
-        val style = when (report.getLevel()) {
-            DailyReport.Level.OK ->
-                MessageStyle.SUCCESS
-            DailyReport.Level.WARNING ->
-                MessageStyle.WARNING
-            else ->
-                MessageStyle.ERROR
-        }
+    private fun reportMessage(report: MonthlyReport): ChatMessage {
+        val style = MessageStyle.SUCCESS
         return message {
             section {
                 text(
-                    "${report.date} ${report.date.dayOfWeek.getDisplayName(TextStyle.FULL, Locale.ENGLISH)}",
+                    "${report.date} ${report.date.month.getDisplayName(TextStyle.FULL, Locale.ENGLISH)}",
                     style
                 )
                 fields {
@@ -85,15 +75,13 @@ class ReportCommand(private val reportUseCase: IReportUseCase, override val spac
         }
     }
 
-    private fun getArgs(payload: MessagePayload): ReportArgs? {
+    private fun getArgs(payload: MessagePayload): MonthlyReportArgs? {
         val today = Calendar.getInstance().time.toInstant().toKotlinInstant().toLocalDateTime(TimeZone.UTC).date
         val args = payload.commandArguments()?.replace("\n", "") ?: return null
         return try {
-            val start =
+            val date =
                 args.substringBefore(" ").takeIf { it.isNotEmpty() }?.let { LocalDate.parse(it) } ?: today
-            val end = args.substringAfter(" ").trimStart().takeIf { it.isNotEmpty() }?.let { LocalDate.parse(it) }
-                ?: today
-            ReportArgs(from = start, to = end)
+            MonthlyReportArgs(date = date)
         } catch (e: Exception) {
             return null
         }

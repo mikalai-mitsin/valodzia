@@ -2,7 +2,7 @@ package com.`018bf`.interfaces.space.commands
 
 import kotlinx.datetime.LocalDate
 
-class ReportArgs(
+class DailyReportArgs(
     val from: LocalDate,
     val to: LocalDate,
 )

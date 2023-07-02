@@ -2,11 +2,10 @@ package com.`018bf`.usecases
 
 import kotlinx.datetime.*
 import com.`018bf`.domain.models.DailyReport
-import com.`018bf`.domain.models.IssueReport
+import com.`018bf`.domain.models.MonthlyReport
 import com.`018bf`.domain.repositories.IIssueRepository
 import com.`018bf`.domain.repositories.IWorkingDayRepository
 import com.`018bf`.domain.usecases.IReportUseCase
-import space.jetbrains.api.runtime.types.MessageStyle
 
 
 class ReportUseCase(
@@ -17,12 +16,11 @@ class ReportUseCase(
     override suspend fun getDailyReportByUser(userID: String, date: LocalDate): DailyReport {
         val days = workingDayRepository.listByUserID(userID)
         val issues = issueRepository.getIssueByProjectAndUser(userID)
-        return DailyReport(
-            date = date,
-            spend = issues.filter { it.getDaySum(date).isPositive() }
-                .map { IssueReport("${it.project}: ${it.title}", it.getDaySum(date)) },
-            workingDay = days.first { it.day == date.dayOfWeek }
-        )
+        return DailyReport.FromIssues(date, issues, days.first { it.day == date.dayOfWeek })
+    }
+    override suspend fun getMonthlyReportByUser(userID: String, date: LocalDate): MonthlyReport {
+        val issues = issueRepository.getIssueByProjectAndUser(userID)
+        return MonthlyReport.FromIssues(date, issues)
     }
 
     override suspend fun listDailyReportByUserAndDates(

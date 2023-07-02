@@ -10,4 +10,9 @@ data class Issue(val id: String, val title: String, val project: String, val spe
         val count = this.spends.filter { it.date == date }.sumOf { it.duration.toInt(DurationUnit.MINUTES) }
         return count.toDuration(DurationUnit.MINUTES)
     }
+
+    fun getMonthSum(date: LocalDate): Duration {
+        val count = this.spends.filter { it.date.monthNumber == date.monthNumber }.sumOf { it.duration.toInt(DurationUnit.MINUTES) }
+        return count.toDuration(DurationUnit.MINUTES)
+    }
 }
