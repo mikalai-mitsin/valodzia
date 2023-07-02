@@ -12,11 +12,11 @@ plugins {
     id("io.ktor.plugin") version "2.1.3"
 }
 
-group = "com.018bf"
+group = "com.valodzia"
 version = "0.1.8"
 
 application {
-    mainClass.set("com.018bf.ApplicationKt")
+    mainClass.set("com.valodzia.ApplicationKt")
     val isDevelopment: Boolean = project.ext.has("development")
     applicationDefaultJvmArgs = listOf("-Dio.ktor.development=$isDevelopment")
 }
@@ -43,7 +43,7 @@ dependencies {
 tasks.withType<Jar> {
     // Otherwise you'll get a "No main manifest attribute" error
     manifest {
-        attributes["Main-Class"] = "com.018bf.ApplicationKt"
+        attributes["Main-Class"] = "com.valodzia.ApplicationKt"
     }
 
     // To avoid the duplicate handling strategy error
